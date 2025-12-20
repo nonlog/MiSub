@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  misub-dev:
+    container_name: misub-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder # 使用构建阶段
+    image: misub:dev
+    ports:
+      - "3100:3100" # 前端开发服务器 (Vite)
+      - "3200:3200" # 后端服务端口
+    volumes:
+      # 挂载源码 - 支持热重载
+      - ./src:/app/src
+      - ./server:/app/server
+      - ./public:/app/public
+      # 挂载配置文件
+      - ./vite.config.js:/app/vite.config.js
+      - ./package.json:/app/package.json
+      # 数据持久化
+      - ./data:/app/data
+      # 排除 node_modules (使用容器内的)
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3200
+      - VITE_PORT=3100
+      - ADMIN_PASSWORD=admin123 # 开发环境默认密码
+      - COOKIE_SECRET=dev_secret_key_change_in_production
+      - DB_PATH=/app/data/misub-dev.db
+    env_file:
+      - .env.development # 开发环境专用配置
+    command: npm run dev:all # 同时启动前端和后端
+    restart: unless-stopped
+    networks:
+      - misub-dev-network
+    stdin_open: true # 支持交互式调试
+    tty: true
+
+networks:
+  misub-dev-network:
+    driver: bridge

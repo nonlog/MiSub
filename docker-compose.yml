@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  misub:
+    container_name: misub
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: misub:latest
+    ports:
+      - "3200:3200" # 后端服务端口
+    volumes:
+      # 数据持久化 - SQLite 数据库
+      - ./data:/app/data
+      # 可选: 挂载自定义配置
+      # - ./config:/app/config
+    environment:
+      - NODE_ENV=production
+      - PORT=3200
+      - ADMIN_PASSWORD=change_this_password # 请修改为您的管理员密码
+      - DB_PATH=/app/data/misub.db
+      # COOKIE_SECRET 会自动生成,无需手动配置
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3200/api/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - misub-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  misub-network:
+    driver: bridge
+
+volumes:
+  # 命名卷 (可选,用于更好的数据管理)
+  misub-data:
+    driver: local

@@ -1,0 +1,47 @@
+# Node modules
+node_modules/
+npm-debug.log*
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Wrangler (Cloudflare)
+.wrangler/
+
+# Documentation
+*.md
+README.md
+LICENSE
+
+# Environment files
+.env
+.env.*
+
+# Data
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+tests/
+test-*.js
+
+# CI/CD
+.github/
+
+# Build artifacts (will be generated in container)
+dist/
+dev-dist/
